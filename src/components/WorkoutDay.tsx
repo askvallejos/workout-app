@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MoreVertical, RotateCcw } from 'lucide-react';
+import { MoreVertical, RotateCcw, Calendar, Moon, Sun } from 'lucide-react';
 import { ExerciseCard } from './ExerciseCard';
 import { TimerBanner } from './TimerBanner';
 import { useTimer } from '../hooks/useTimer';
@@ -27,11 +27,23 @@ interface WorkoutData {
 interface WorkoutDayProps {
   day: string;
   workoutData: WorkoutData;
+  onDayChange: (day: string) => void;
+  isDarkMode: boolean;
+  onThemeToggle: () => void;
+  availableDays: string[];
 }
 
-export const WorkoutDay: React.FC<WorkoutDayProps> = ({ day, workoutData }) => {
+export const WorkoutDay: React.FC<WorkoutDayProps> = ({ 
+  day, 
+  workoutData, 
+  onDayChange, 
+  isDarkMode, 
+  onThemeToggle,
+  availableDays 
+}) => {
   const [completedSets, setCompletedSets] = useState<boolean[][]>([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDaySelector, setShowDaySelector] = useState(false);
   const { timeLeft, isRunning, startTimer, stopTimer, addTime, progress } = useTimer();
   const contentRef = useRef<HTMLDivElement>(null);
   
@@ -103,8 +115,14 @@ export const WorkoutDay: React.FC<WorkoutDayProps> = ({ day, workoutData }) => {
     setShowMenu(false);
   };
   
+  const handleDaySelect = (selectedDay: string) => {
+    onDayChange(selectedDay);
+    setShowDaySelector(false);
+    setShowMenu(false);
+  };
+  
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
       {isRunning && (
         <TimerBanner
           timeLeft={timeLeft}
@@ -114,7 +132,7 @@ export const WorkoutDay: React.FC<WorkoutDayProps> = ({ day, workoutData }) => {
         />
       )}
       
-      <div className={`sticky top-0 z-40 bg-black border-b border-gray-800 ${isRunning ? 'mt-16' : ''}`}>
+      <div className={`sticky top-0 z-40 ${isDarkMode ? 'bg-black border-gray-800' : 'bg-white border-gray-200'} border-b ${isRunning ? 'mt-16' : ''}`}>
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
             <div className="relative w-12 h-12">
@@ -122,7 +140,7 @@ export const WorkoutDay: React.FC<WorkoutDayProps> = ({ day, workoutData }) => {
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke="rgb(55, 65, 81)"
+                  stroke={isDarkMode ? "rgb(55, 65, 81)" : "rgb(229, 231, 235)"}
                   strokeWidth="2"
                 />
                 <path
@@ -140,27 +158,64 @@ export const WorkoutDay: React.FC<WorkoutDayProps> = ({ day, workoutData }) => {
             
             <div>
               <h1 className="text-xl font-bold capitalize">{day}</h1>
-              <p className="text-gray-400 text-sm">{workoutData.name}</p>
+              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{workoutData.name}</p>
             </div>
           </div>
           
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+              className={`p-2 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} rounded-full transition-colors`}
             >
-              <MoreVertical className="w-5 h-5 text-gray-400" />
+              <MoreVertical className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
             </button>
             
             {showMenu && (
-              <div className="absolute right-0 top-12 bg-gray-900 border border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
+              <div className={`absolute right-0 top-12 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-lg overflow-hidden z-50`}>
+                <button
+                  onClick={() => setShowDaySelector(!showDaySelector)}
+                  className={`flex items-center space-x-2 w-full px-4 py-3 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'} transition-colors text-left`}
+                >
+                  <Calendar className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+                  <span>Select Day</span>
+                </button>
+                <button
+                  onClick={onThemeToggle}
+                  className={`flex items-center space-x-2 w-full px-4 py-3 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'} transition-colors text-left`}
+                >
+                  {isDarkMode ? (
+                    <Sun className="w-4 h-4 text-yellow-400" />
+                  ) : (
+                    <Moon className="w-4 h-4 text-gray-600" />
+                  )}
+                  <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
                 <button
                   onClick={resetDay}
-                  className="flex items-center space-x-2 w-full px-4 py-3 hover:bg-gray-800 transition-colors text-left"
+                  className={`flex items-center space-x-2 w-full px-4 py-3 ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'} transition-colors text-left`}
                 >
-                  <RotateCcw className="w-4 h-4 text-gray-400" />
+                  <RotateCcw className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
                   <span>Reset Day</span>
                 </button>
+              </div>
+            )}
+            
+            {showDaySelector && (
+              <div className={`absolute right-0 top-32 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-lg overflow-hidden z-50 w-48`}>
+                {availableDays.map(dayOption => (
+                  <button
+                    key={dayOption}
+                    onClick={() => handleDaySelect(dayOption)}
+                    className={`
+                      w-full text-left px-4 py-3 capitalize transition-colors
+                      ${day === dayOption 
+                        ? isDarkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                        : isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}
+                    `}
+                  >
+                    {dayOption}
+                  </button>
+                ))}
               </div>
             )}
           </div>

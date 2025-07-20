@@ -16,6 +16,7 @@ interface SetRowProps {
   isCompleted: boolean;
   onToggle: () => void;
   onSkip: () => void;
+  isDarkMode: boolean;
 }
 
 export const SetRow: React.FC<SetRowProps> = ({
@@ -23,7 +24,8 @@ export const SetRow: React.FC<SetRowProps> = ({
   exerciseName,
   isCompleted,
   onToggle,
-  onSkip
+  onSkip,
+  isDarkMode
 }) => {
   const handleSwipeLeft = (e: React.TouchEvent) => {
     const touch = e.changedTouches[0];
@@ -52,7 +54,7 @@ export const SetRow: React.FC<SetRowProps> = ({
 
   return (
     <div 
-      className="flex items-center py-3 px-4 border-b border-gray-800 touch-pan-y"
+      className={`flex items-center py-3 px-4 border-b ${isDarkMode ? 'border-gray-800' : 'border-gray-200'} touch-pan-y`}
       onTouchEnd={handleSwipeLeft}
     >
       <button
@@ -61,13 +63,13 @@ export const SetRow: React.FC<SetRowProps> = ({
           w-6 h-6 rounded border-2 flex items-center justify-center mr-4 transition-all
           ${isCompleted 
             ? 'bg-emerald-500 border-emerald-500' 
-            : 'border-gray-600 hover:border-gray-400'}
+            : isDarkMode ? 'border-gray-600 hover:border-gray-400' : 'border-gray-300 hover:border-gray-500'}
         `}
       >
         {isCompleted && <Check className="w-4 h-4 text-white" />}
       </button>
       
-      <div className="w-12 text-center text-gray-300 text-sm">
+      <div className={`w-12 text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
         {set.set}
       </div>
       
@@ -82,11 +84,11 @@ export const SetRow: React.FC<SetRowProps> = ({
         </span>
       </div>
       
-      <div className="w-16 text-center text-gray-300 text-sm">
+      <div className={`w-16 text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
         {getRepsDisplay()}
       </div>
       
-      <div className="w-20 text-center text-gray-300 text-sm">
+      <div className={`w-20 text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
         {getWeightDisplay()}
       </div>
     </div>
