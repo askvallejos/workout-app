@@ -72,7 +72,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
             <div className="flex-1 px-2">TYPE</div>
             <div className="w-16 text-center">REPS</div>
             <div className="w-20 text-center">WEIGHT</div>
-            <div className="w-16 text-center">REST</div>
           </div>
           
           {exercise.sets.map((set, index) => (

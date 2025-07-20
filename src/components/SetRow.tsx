@@ -89,19 +89,6 @@ export const SetRow: React.FC<SetRowProps> = ({
       <div className="w-20 text-center text-gray-300 text-sm">
         {getWeightDisplay()}
       </div>
-      
-      <div className="w-16 text-center text-gray-400 text-xs">
-        {isCompleted ? (
-          <Check className="w-4 h-4 mx-auto text-emerald-500" />
-        ) : (
-          <button
-            onClick={onSkip}
-            className="p-1 hover:bg-gray-800 rounded transition-colors"
-          >
-            <SkipForward className="w-4 h-4" />
-          </button>
-        )}
-      </div>
     </div>
   );
 };
