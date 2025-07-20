@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, MoreVertical, Sun, Moon } from 'lucide-react';
 import { WorkoutDay } from './components/WorkoutDay';
 import { getCurrentDay } from './utils/dateHelpers';
 import workoutData from './data/workout.json';
